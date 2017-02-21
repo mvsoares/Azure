@@ -1,0 +1,352 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmSku": {
+            "type": "string",
+            "metadata": {
+                "description": "Size of VMs in the VM Scale Set."
+            }
+        },
+        "imageId": {
+            "type": "string",
+            "metadata": {
+                "description": "Id of the Managed Disk image."
+            }
+        },
+        "vmssName": {
+            "type": "string",
+            "metadata": {
+                "description": "String used as a base for naming resources. Must be 3-61 characters in length and globally unique across Azure. A hash is prepended to this string for some resources, and resource-specific information is appended."
+            },
+            "maxLength": 61
+        },
+        "instanceCount": {
+            "type": "int",
+            "metadata": {
+                "description": "Number of VM instances (100 or less)."
+            },
+            "maxValue": 100
+        },
+        "minimumVM": {
+            "type": "int",
+            "metadata": {
+                "description": "Autoscale minimum number of VMs."
+            }
+        },
+        "maximumVM": {
+            "type": "int",
+            "metadata": {
+                "description": "Autoscale maximum number of VMs."
+            }
+        },
+        "adminUsername": {
+            "type": "string",
+            "metadata": {
+                "description": "Admin username on all VMs."
+            }
+        },
+        "adminPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Admin password on all VMs."
+            }
+        },
+        "appGtwSubnet": {
+            "type": "string",
+            "metadata": {
+                "description": "AppGtw Subnet"
+            }
+        },
+        "vmssSubnet": {
+            "type": "string",
+            "metadata": {
+
+                "description": "vmss Subnet"
+            }
+        },
+        "vnetName": {
+            "type": "string",
+            "metadata": {
+
+                "description": "vmss Subnet"
+            }
+        }
+    },
+
+    "variables": {
+        "namingInfix": "[toLower(substring(concat(parameters('vmssName'), uniqueString(resourceGroup().id)), 0, 9))]",
+        "longNamingInfix": "[toLower(parameters('vmssName'))]",
+        "virtualNetworkName": "[parameters('vnetName')]",
+        "subnetName": "[parameters('vmssSubnet')]",
+        "subnetID": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'), '/subnets/', variables('subnetName'))]",
+        "loadBalancerName": "[concat(variables('namingInfix'), 'lb')]",
+        "lbID": "[resourceId('Microsoft.Network/loadBalancers',variables('loadBalancerName'))]",
+        "natPoolName": "[concat(variables('namingInfix'), 'natpool')]",
+        "bePoolName": "[concat(variables('namingInfix'), 'bepool')]",
+        "natStartPort": 50000,
+        "natEndPort": 50119,
+        "natBackendPort": 22,
+        "nicName": "[concat(variables('namingInfix'), 'nic')]",
+        "ipConfigName": "[concat(variables('namingInfix'), 'ipconfig')]",
+        "frontEndIPConfigID": "[concat(variables('lbID'),'/frontendIPConfigurations/loadBalancerFrontEnd')]",
+        "osType": "Linux",
+        "insightsApiVersion": "2015-04-01",
+        "appGwPublicIPAddressName": "[concat(variables('namingInfix'), 'appGwPip')]",
+        "appGwName": "[concat(variables('namingInfix'), 'appGw')]",
+        "appGwID": "[resourceId('Microsoft.Network/applicationGateways',variables('appGwName'))]",
+        "appGwSubnetID": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'), '/subnets/', parameters('appGtwSubnet'))]",
+        "appGwFrontendPort": 80,
+        "appGwBackendPort": 80,
+        "appGwBePoolName": "[concat(variables('namingInfix'), 'appGwBepool')]",
+        "computeApiVersion": "2016-04-30-preview",
+        "networkApiVersion": "2016-03-30"
+    },
+    "resources": [
+
+        {
+            "type": "Microsoft.Network/loadBalancers",
+            "name": "[variables('loadBalancerName')]",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "[variables('networkApiVersion')]",
+
+            "properties": {
+                "frontendIPConfigurations": [{
+                    "name": "LoadBalancerFrontEnd",
+                    "properties": {
+                        "subnet": {
+                            "id": "[variables('subnetID')]"
+                        },
+                        "privateIPAllocationMethod": "Dynamic"
+                    }
+                }],
+
+                "backendAddressPools": [{
+                    "name": "[variables('bePoolName')]"
+                }],
+
+                "inboundNatPools": [{
+                    "name": "[variables('natPoolName')]",
+                    "properties": {
+                        "frontendIPConfiguration": {
+                            "id": "[variables('frontEndIPConfigID')]"
+                        },
+                        "protocol": "tcp",
+                        "frontendPortRangeStart": "[variables('natStartPort')]",
+                        "frontendPortRangeEnd": "[variables('natEndPort')]",
+                        "backendPort": "[variables('natBackendPort')]"
+                    }
+                }]
+            }
+        },
+
+
+        {
+            "type": "Microsoft.Network/applicationGateways",
+            "name": "[variables('appGwName')]",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "[variables('networkApiVersion')]",
+            "properties": {
+                "sku": {
+                    "name": "Standard_Small",
+                    "tier": "Standard",
+                    "capacity": "2"
+                },
+                "gatewayIPConfigurations": [{
+                    "name": "appGwIpConfig",
+                    "properties": {
+                        "subnet": {
+                            "id": "[variables('appGwSubnetID')]"
+                        }
+                    }
+                }],
+                "frontendIPConfigurations": [{
+                    "name": "appGwFrontendIP",
+                    "type": "Private",
+                    "properties": {
+                        "subnet": {
+                            "id": "[variables('appGwSubnetID')]"
+                        },
+                        "privateIPAllocationMethod": "Dynamic"
+                    }
+                }],
+                "frontendPorts": [{
+                    "name": "appGwFrontendPort",
+                    "properties": {
+                        "Port": "[variables('appGwFrontendPort')]"
+                    }
+                }],
+                "backendAddressPools": [{
+                    "name": "[variables('appGwBePoolName')]"
+                }],
+                "backendHttpSettingsCollection": [{
+                    "name": "appGwBackendHttpSettings",
+                    "properties": {
+                        "Port": "[variables('appGwBackendPort')]",
+                        "Protocol": "Http",
+                        "CookieBasedAffinity": "Disabled"
+                    }
+                }],
+                "httpListeners": [{
+                    "name": "appGwHttpListener",
+                    "properties": {
+                        "FrontendIPConfiguration": {
+                            "Id": "[concat(variables('appGwID'), '/frontendIPConfigurations/appGwFrontendIP')]"
+                        },
+                        "FrontendPort": {
+                            "Id": "[concat(variables('appGwID'), '/frontendPorts/appGwFrontendPort')]"
+                        },
+                        "Protocol": "Http",
+                        "SslCertificate": null
+                    }
+                }],
+                "requestRoutingRules": [{
+                    "Name": "rule1",
+                    "properties": {
+                        "RuleType": "Basic",
+                        "httpListener": {
+                            "id": "[concat(variables('appGwID'), '/httpListeners/appGwHttpListener')]"
+                        },
+                        "backendAddressPool": {
+                            "id": "[concat(variables('appGwID'), '/backendAddressPools/', variables('appGwBePoolName'))]"
+                        },
+                        "backendHttpSettings": {
+                            "id": "[concat(variables('appGwID'), '/backendHttpSettingsCollection/appGwBackendHttpSettings')]"
+                        }
+                    }
+                }]
+            }
+        },
+
+
+
+        {
+            "type": "Microsoft.Compute/virtualMachineScaleSets",
+            "name": "[variables('namingInfix')]",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "[variables('computeApiVersion')]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/loadBalancers/', variables('loadBalancerName'))]",
+                "[concat('Microsoft.Network/applicationGateways/', variables('appGwName'))]"
+            ],
+            "sku": {
+                "name": "[parameters('vmSku')]",
+                "tier": "Standard",
+                "capacity": "[parameters('instanceCount')]"
+            },
+            "properties": {
+                "overprovision": "true",
+                "upgradePolicy": {
+                    "mode": "Manual"
+                },
+                "virtualMachineProfile": {
+                    "storageProfile": {
+                        "imageReference": {
+                            "id": "[parameters('imageId')]"
+                        },
+                        "osDisk": {
+                            "osType": "[variables('osType')]",
+                            "caching": "ReadOnly",
+                            "createOption": "FromImage"
+                        }
+                    },
+                    "osProfile": {
+                        "computerNamePrefix": "[variables('namingInfix')]",
+                        "adminUsername": "[parameters('adminUsername')]",
+                        "adminPassword": "[parameters('adminPassword')]"
+                    },
+                    "networkProfile": {
+                        "networkInterfaceConfigurations": [{
+                            "name": "[variables('nicName')]",
+                            "properties": {
+                                "primary": "true",
+                                "ipConfigurations": [{
+                                    "name": "[variables('ipConfigName')]",
+                                    "properties": {
+                                        "subnet": {
+                                            "id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'), '/subnets/', variables('subnetName'))]"
+                                        },
+                                        "ApplicationGatewayBackendAddressPools": [{
+                                            "id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/applicationGateways/', variables('appGwName'), '/backendAddressPools/', variables('appGwBePoolName'))]"
+                                        }],
+                                        "loadBalancerBackendAddressPools": [{
+                                            "id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', variables('loadBalancerName'), '/backendAddressPools/', variables('bePoolName'))]"
+                                        }],
+                                        "loadBalancerInboundNatPools": [{
+                                            "id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', variables('loadBalancerName'), '/inboundNatPools/', variables('natPoolName'))]"
+                                        }]
+                                    }
+                                }]
+                            }
+                        }]
+                    }
+                }
+            }
+        },
+
+
+        {
+            "type": "Microsoft.Insights/autoscaleSettings",
+            "apiVersion": "[variables('insightsApiVersion')]",
+            "name": "autoscalewad",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachineScaleSets/', variables('namingInfix'))]"
+            ],
+            "properties": {
+                "name": "autoscalewad",
+                "targetResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  resourceGroup().name, '/providers/Microsoft.Compute/virtualMachineScaleSets/', variables('namingInfix'))]",
+                "enabled": true,
+                "profiles": [{
+                    "name": "Profile1",
+                    "capacity": {
+                        "minimum": "[parameters('minimumVM')]",
+                        "maximum": "[parameters('maximumVM')]",
+                        "default": "2"
+                    },
+                    "rules": [{
+                            "metricTrigger": {
+                                "metricName": "Percentage CPU",
+                                "metricNamespace": "",
+                                "metricResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  resourceGroup().name, '/providers/Microsoft.Compute/virtualMachineScaleSets/', variables('namingInfix'))]",
+                                "timeGrain": "PT1M",
+                                "statistic": "Average",
+                                "timeWindow": "PT5M",
+                                "timeAggregation": "Average",
+                                "operator": "GreaterThan",
+                                "threshold": 60.0
+                            },
+                            "scaleAction": {
+                                "direction": "Increase",
+                                "type": "ChangeCount",
+                                "value": "2",
+                                "cooldown": "PT1M"
+                            }
+                        },
+                        {
+                            "metricTrigger": {
+                                "metricName": "Percentage CPU",
+                                "metricNamespace": "",
+                                "metricResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  resourceGroup().name, '/providers/Microsoft.Compute/virtualMachineScaleSets/', variables('namingInfix'))]",
+                                "timeGrain": "PT1M",
+                                "statistic": "Average",
+                                "timeWindow": "PT5M",
+                                "timeAggregation": "Average",
+                                "operator": "LessThan",
+                                "threshold": 30.0
+                            },
+                            "scaleAction": {
+                                "direction": "Decrease",
+                                "type": "ChangeCount",
+                                "value": "1",
+                                "cooldown": "PT5M"
+                            }
+                        }
+                    ]
+                }]
+            }
+        }
+
+
+    ]
+}

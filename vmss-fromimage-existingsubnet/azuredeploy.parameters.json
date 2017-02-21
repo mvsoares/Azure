@@ -1,0 +1,39 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmSku": {
+            "value": "Standard_DS1_V2"
+        },
+        "imageId": {
+            "value": "/subscriptions/1e9d081d-935a-4dd1-8054-b31dd2201362/resourceGroups/RG-TST-ZUP-01/providers/Microsoft.Compute/images/imgtstzup"
+        },
+        "vmssName": {
+            "value": "tstshm"
+        },
+        "instanceCount": {
+            "value": 2
+        },
+        "minimumVM": {
+            "value": 1
+        },
+        "maximumVM": {
+            "value": 5
+        },
+        "adminUsername": {
+            "value": "zupuser"
+        },
+        "adminPassword": {
+            "value": "Pass@word123"
+        },
+        "appGtwSubnet": {
+            "value": "appgtw-subnet"
+        },
+        "vmssSubnet": {
+            "value": "vmss-subnet"
+        },
+        "vnetName": {
+            "value": "VNET-01"
+        }
+    }
+}
