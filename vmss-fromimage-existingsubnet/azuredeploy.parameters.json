@@ -6,7 +6,7 @@
             "value": "Standard_DS1_V2"
         },
         "imageId": {
-            "value": "/subscriptions/1e9d081d-935a-4dd1-8054-b31dd2201362/resourceGroups/RG-TST-ZUP-01/providers/Microsoft.Compute/images/imgtstzup"
+            "value": "/subscriptions/SUB-ID/resourceGroups/RG-NAME/providers/Microsoft.Compute/images/IMAGE-NAME"
         },
         "vmssName": {
             "value": "tstshm"
@@ -21,10 +21,10 @@
             "value": 5
         },
         "adminUsername": {
-            "value": "zupuser"
+            "value": "YOURUSER"
         },
         "adminPassword": {
-            "value": "Pass@word123"
+            "value": "YOUPASSWORDHERE"
         },
         "appGtwSubnet": {
             "value": "appgtw-subnet"
@@ -33,7 +33,7 @@
             "value": "vmss-subnet"
         },
         "vnetName": {
-            "value": "VNET-01"
+            "value": "MAIN-VNET"
         }
     }
 }

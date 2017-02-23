@@ -1,0 +1,284 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmSku": {
+            "type": "string",
+            "metadata": {
+                "description": "Size of VMs in the VM Scale Set."
+            }
+        },
+        "imageId": {
+            "type": "string",
+            "metadata": {
+                "description": "Id of the Managed Disk image."
+            }
+        },
+        "vmssName": {
+            "type": "string",
+            "metadata": {
+                "description": "String used as a base for naming resources. Must be 3-61 characters in length and globally unique across Azure. A hash is prepended to this string for some resources, and resource-specific information is appended."
+            },
+            "maxLength": 61
+        },
+        "instanceCount": {
+            "type": "int",
+            "metadata": {
+                "description": "Number of VM instances (100 or less)."
+            },
+            "maxValue": 100
+        },
+        "minimumVM": {
+            "type": "int",
+            "metadata": {
+                "description": "Autoscale minimum number of VMs."
+            }
+        },
+        "maximumVM": {
+            "type": "int",
+            "metadata": {
+                "description": "Autoscale maximum number of VMs."
+            }
+        },
+        "adminUsername": {
+            "type": "string",
+            "metadata": {
+                "description": "Admin username on all VMs."
+            }
+        },
+        "adminPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Admin password on all VMs."
+            }
+        },
+        "appGtwSubnet": {
+            "type": "string",
+            "metadata": {
+                "description": "Subnet for Application Gateway - must exist"
+            }
+        },
+        "applicationGateway": {
+            "type": "string",
+            "metadata": {
+                "description": "Existing Application Gateway name - must exist"
+            }
+        },
+        "vmssSubnet": {
+            "type": "string",
+            "metadata": {
+
+                "description": "Subnet where VMSS will be deployed - must exist"
+            }
+        },
+        "vnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "Global VNET where the Subnets resided - must exist"
+            }
+        },
+        "rgAppGtw": {
+            "type": "string",
+            "metadata": {
+                "description": "Resource Group where the current Application Gateway is located - must exist"
+            }
+        },
+        "applicationGatewayBePoolName": {
+            "type": "string",
+            "metadata": {
+                "description": "BackendPool Name where this VMSS will be attached - must exist"
+            }
+        }
+    },
+
+    "variables": {
+        "newVMSSName": "[parameters('vmssName')]",
+        "virtualNetworkName": "[parameters('vnetName')]",
+        "rgAppGtw": "[parameters('rgAppGtw')]",
+        "subnetName": "[parameters('vmssSubnet')]",
+        "subnetID": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', variables('rgAppGtw'), '/providers/Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'), '/subnets/', variables('subnetName'))]",
+        "loadBalancerName": "[concat(variables('newVMSSName'), '-ilb')]",
+        "lbID": "[resourceId('Microsoft.Network/loadBalancers',variables('loadBalancerName'))]",
+        "natPoolName": "[concat(variables('newVMSSName'), 'natpool')]",
+        "bePoolName": "[concat(variables('newVMSSName'), 'bepool')]",
+        "natStartPort": 50000,
+        "natEndPort": 50119,
+        "natBackendPort": 22,
+        "nicName": "[concat(variables('newVMSSName'), 'nic')]",
+        "ipConfigName": "[concat(variables('newVMSSName'), 'ipconfig')]",
+        "frontEndIPConfigID": "[concat(variables('lbID'),'/frontendIPConfigurations/loadBalancerFrontEnd')]",
+        "osType": "Linux",
+        "appGwPublicIPAddressName": "[concat(variables('newVMSSName'), 'appGwPip')]",
+        "appGwName": "[parameters('applicationGateway')]",
+        "appGwID": "[resourceId('Microsoft.Network/applicationGateways',parameters('applicationGateway'))]",
+        "appGwBePoolName": "[parameters('applicationGatewayBePoolName')]",
+        "computeApiVersion": "2016-04-30-preview",
+        "networkApiVersion": "2016-03-30",
+        "insightsApiVersion": "2015-04-01"
+    },
+    "resources": [
+
+        {
+            "type": "Microsoft.Network/loadBalancers",
+            "name": "[variables('loadBalancerName')]",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "[variables('networkApiVersion')]",
+            "properties": {
+                "frontendIPConfigurations": [{
+                    "name": "LoadBalancerFrontEnd",
+                    "properties": {
+                        "subnet": {
+                            "id": "[variables('subnetID')]"
+                        },
+                        "privateIPAllocationMethod": "Dynamic"
+                    }
+                }],
+
+                "backendAddressPools": [{
+                    "name": "[variables('bePoolName')]"
+                }],
+
+                "inboundNatPools": [{
+                    "name": "[variables('natPoolName')]",
+                    "properties": {
+                        "frontendIPConfiguration": {
+                            "id": "[variables('frontEndIPConfigID')]"
+                        },
+                        "protocol": "tcp",
+                        "frontendPortRangeStart": "[variables('natStartPort')]",
+                        "frontendPortRangeEnd": "[variables('natEndPort')]",
+                        "backendPort": "[variables('natBackendPort')]"
+                    }
+                }]
+            }
+        },
+
+        {
+            "type": "Microsoft.Compute/virtualMachineScaleSets",
+            "name": "[variables('newVMSSName')]",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "[variables('computeApiVersion')]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/loadBalancers/', variables('loadBalancerName'))]"
+            ],
+            "sku": {
+                "name": "[parameters('vmSku')]",
+                "tier": "Standard",
+                "capacity": "[parameters('instanceCount')]"
+            },
+            "properties": {
+                "overprovision": "true",
+                "upgradePolicy": {
+                    "mode": "Manual"
+                },
+                "virtualMachineProfile": {
+                    "storageProfile": {
+                        "imageReference": {
+                            "id": "[parameters('imageId')]"
+                        },
+                        "osDisk": {
+                            "osType": "[variables('osType')]",
+                            "caching": "ReadOnly",
+                            "createOption": "FromImage"
+                        }
+                    },
+                    "osProfile": {
+                        "computerNamePrefix": "[variables('newVMSSName')]",
+                        "adminUsername": "[parameters('adminUsername')]",
+                        "adminPassword": "[parameters('adminPassword')]"
+                    },
+                    "networkProfile": {
+                        "networkInterfaceConfigurations": [{
+                            "name": "[variables('nicName')]",
+                            "properties": {
+                                "primary": "true",
+                                "ipConfigurations": [{
+                                    "name": "[variables('ipConfigName')]",
+                                    "properties": {
+                                        "subnet": {
+                                            "id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/',  variables('rgAppGtw'), '/providers/Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'), '/subnets/', variables('subnetName'))]"
+                                        },
+                                        "ApplicationGatewayBackendAddressPools": [{
+                                            "id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', variables('rgAppGtw'), '/providers/Microsoft.Network/applicationGateways/', variables('appGwName'), '/backendAddressPools/', variables('appGwBePoolName'))]"
+                                        }],
+                                        "loadBalancerBackendAddressPools": [{
+                                            "id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', variables('loadBalancerName'), '/backendAddressPools/', variables('bePoolName'))]"
+                                        }],
+                                        "loadBalancerInboundNatPools": [{
+                                            "id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', variables('loadBalancerName'), '/inboundNatPools/', variables('natPoolName'))]"
+                                        }]
+                                    }
+                                }]
+                            }
+                        }]
+                    }
+                }
+            }
+        },
+
+
+        {
+            "type": "Microsoft.Insights/autoscaleSettings",
+            "apiVersion": "[variables('insightsApiVersion')]",
+            "name": "autoscalewad",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachineScaleSets/', variables('newVMSSName'))]"
+            ],
+            "properties": {
+                "name": "autoscalewad",
+                "targetResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  resourceGroup().name, '/providers/Microsoft.Compute/virtualMachineScaleSets/', variables('newVMSSName'))]",
+                "enabled": true,
+                "profiles": [{
+                    "name": "Profile1",
+                    "capacity": {
+                        "minimum": "[parameters('minimumVM')]",
+                        "maximum": "[parameters('maximumVM')]",
+                        "default": "2"
+                    },
+                    "rules": [{
+                            "metricTrigger": {
+                                "metricName": "Percentage CPU",
+                                "metricNamespace": "",
+                                "metricResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  resourceGroup().name, '/providers/Microsoft.Compute/virtualMachineScaleSets/', variables('newVMSSName'))]",
+                                "timeGrain": "PT1M",
+                                "statistic": "Average",
+                                "timeWindow": "PT5M",
+                                "timeAggregation": "Average",
+                                "operator": "GreaterThan",
+                                "threshold": 60.0
+                            },
+                            "scaleAction": {
+                                "direction": "Increase",
+                                "type": "ChangeCount",
+                                "value": "2",
+                                "cooldown": "PT1M"
+                            }
+                        },
+                        {
+                            "metricTrigger": {
+                                "metricName": "Percentage CPU",
+                                "metricNamespace": "",
+                                "metricResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  resourceGroup().name, '/providers/Microsoft.Compute/virtualMachineScaleSets/', variables('newVMSSName'))]",
+                                "timeGrain": "PT1M",
+                                "statistic": "Average",
+                                "timeWindow": "PT5M",
+                                "timeAggregation": "Average",
+                                "operator": "LessThan",
+                                "threshold": 30.0
+                            },
+                            "scaleAction": {
+                                "direction": "Decrease",
+                                "type": "ChangeCount",
+                                "value": "1",
+                                "cooldown": "PT5M"
+                            }
+                        }
+                    ]
+                }]
+            }
+        }
+
+
+    ]
+}

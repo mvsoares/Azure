@@ -1,0 +1,48 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmSku": {
+            "value": "Standard_DS2_V2"
+        },
+        "imageId": {
+            "value": "/subscriptions/YOUR-SUBSCRIPTION-ID/resourceGroups/RESOURCE-GROUP-NAME/providers/Microsoft.Compute/images/IMAGE-NAME"
+        },
+        "vmssName": {
+            "value": "VMSS-NAME"
+        },
+        "instanceCount": {
+            "value": 2
+        },
+        "minimumVM": {
+            "value": 2
+        },
+        "maximumVM": {
+            "value": 10
+        },
+        "adminUsername": {
+            "value": "YOUR-USER"
+        },
+        "adminPassword": {
+            "value": "PASSWORD-GOES-HERE"
+        },
+        "appGtwSubnet": {
+            "value": "SUBNET-NAME FOR APPGTW"
+        },
+        "applicationGateway": {
+            "value": "APP-GTW NAME"
+        },
+        "vmssSubnet": {
+            "value": "SUBNET FOR VMSS"
+        },
+        "vnetName": {
+            "value": "VNET WHERE ALL SUBNETS RESIDES"
+        },
+        "rgAppGtw": {
+            "value": "RG-TST-SHIMOO"
+        },
+        "applicationGatewayBePoolName": {
+            "value": "BACKEND POOL NAME ON APP-GTW"
+        }
+    }
+}
