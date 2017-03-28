@@ -8,6 +8,9 @@
         "sku": {
             "value": "Standard_DS1_V2"
         },
+        "storageSku": {
+            "value": "Premium_LRS"
+        },
         "imageURN": {
             "value": "Canonical:UbuntuServer:17.04-DAILY:17.04.201703270"
         },

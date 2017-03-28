@@ -8,6 +8,13 @@
                 "description": "Size of VMs in the VM Scale Set."
             }
         },
+        "storageSku": {
+            "type": "string",
+            "metadata": {
+                "description": "Storage type. Premium_LRS or Standard_LRS. Choose by vm type"
+            }
+        },
+
         "name": {
             "type": "string",
             "metadata": {
@@ -57,6 +64,7 @@
         "vmName": "[parameters('name')]",
         "uniqueDnsLabelPrefix": "[concat('store', uniquestring(resourceGroup().id))]",
         "vmSize": "[parameters('sku')]",
+        "storageSku": "[parameters('storageSku')]",
         "location": "[resourceGroup().location]",
         "virtualNetworkName": "[parameters('vnet')]",
         "subnetName": "[parameters('subnet')]",
@@ -124,7 +132,7 @@
                     "properties": {
                         "privateIPAllocationMethod": "Dynamic",
                         "networkSecurityGroup": {
-                            "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsgName'))]"
+                            "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsgName'))]"
                         },
                         "publicIPAddress": {
                             "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIpName'))]"
@@ -163,10 +171,10 @@
 
                     "osDisk": {
                         "managedDisk": {
-                            "storageAccountType": "Premium_LRS"
+                            "storageAccountType": "[variables('storageSku')]"
                         },
                         "createOption": "FromImage",
-                        "name": "[concat(variables('vmName'), '.oshd')]",
+                        "name": "[concat(variables('vmName'), '.osvhd')]",
                         "osType": "[variables('osType')]"
                     }
                 },
