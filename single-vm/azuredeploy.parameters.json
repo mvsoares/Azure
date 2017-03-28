@@ -11,8 +11,17 @@
         "storageSku": {
             "value": "Premium_LRS"
         },
-        "imageURN": {
-            "value": "Canonical:UbuntuServer:17.04-DAILY:17.04.201703270"
+        "publisher": {
+            "value": "Canonical"
+        },
+        "offer": {
+            "value": "UbuntuServer"
+        },
+        "imageSku": {
+            "value": "17.04-DAILY"
+        },
+        "imageVersion": {
+            "value": "17.04.201703270"
         },
         "osType": {
             "value": "Linux"

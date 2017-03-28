@@ -21,12 +21,35 @@
                 "description": "Size of VMs in the VM Scale Set."
             }
         },
-        "imageURN": {
+
+        "offer": {
             "type": "string",
             "metadata": {
                 "description": "Image from Galery"
             }
         },
+
+        "publisher": {
+            "type": "string",
+            "metadata": {
+                "description": "Image from Galery"
+            }
+        },
+
+        "imageSku": {
+            "type": "string",
+            "metadata": {
+                "description": "Image from Galery"
+            }
+        },
+
+        "imageVersion": {
+            "type": "string",
+            "metadata": {
+                "description": "Image from Galery"
+            }
+        },
+
         "osType": {
             "type": "string",
             "metadata": {
@@ -157,6 +180,7 @@
                 "hardwareProfile": {
                     "vmSize": "[variables('vmSize')]"
                 },
+
                 "osProfile": {
                     "computerName": "[variables('vmName')]",
                     "adminUsername": "[parameters('username')]",
@@ -164,9 +188,11 @@
                 },
 
                 "storageProfile": {
-
                     "imageReference": {
-                        "id": "[variables('imageReference')]"
+                        "publisher": "[parameters('publisher')]",
+                        "offer": "[parameters('offer')]",
+                        "sku": "[parameters('imageSku')]",
+                        "version": "[parameters('imageVersion')]"
                     },
 
                     "osDisk": {
