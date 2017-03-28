@@ -23,6 +23,9 @@
         "imageVersion": {
             "value": "17.04.201703270"
         },
+        "imageURN": {
+            "value": "Canonical:UbuntuServer:16.04.0-LTS:16.04.201611150"
+        },
         "osType": {
             "value": "Linux"
         },

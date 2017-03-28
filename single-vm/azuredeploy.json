@@ -50,6 +50,14 @@
             }
         },
 
+        "imageURN": {
+            "type": "string",
+            "metadata": {
+                "description": "Image from Galery"
+            }
+        },
+
+
         "osType": {
             "type": "string",
             "metadata": {
@@ -188,10 +196,10 @@
 
                 "storageProfile": {
                     "imageReference": {
-                        "publisher": "[parameters('publisher')]",
-                        "offer": "[parameters('offer')]",
-                        "sku": "[parameters('imageSku')]",
-                        "version": "[parameters('imageVersion')]"
+                        "publisher": "[split(parameters('imageURN'),':')[0]]",
+                        "offer": "[split(parameters('imageURN'),':')[1]]",
+                        "sku": "[split(parameters('imageURN'),':')[2]]",
+                        "version": "[split(parameters('imageURN'),':')[3]]"
                     },
 
                     "osDisk": {
@@ -217,7 +225,7 @@
     "outputs": {
         "sshCommand": {
             "type": "string",
-            "value": "[concat('ssh ', parameters('adminUsername'), '@', variables('uniqueDnsLabelPrefix'), '.', resourceGroup().location, '.cloudapp.azure.com')]"
+            "value": "[concat('ssh ', parameters('username'), '@', variables('uniqueDnsLabelPrefix'), '.', resourceGroup().location, '.cloudapp.azure.com')]"
         }
     }
 }
