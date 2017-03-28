@@ -96,7 +96,6 @@
         "ipConfigName": "[concat(variables('vmName'), '.ipc')]",
         "publicIpName": "[concat(variables('vmName'), '.pubip')]",
         "osType": "[parameters('osType')]",
-        "imageReference": "[parameters('imageURN')]",
         "vnetID": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
         "subnetID": "[concat(variables('vnetID'),'/subnets/',variables('subnetName'))]",
         "computeApiVersion": "2016-04-30-preview",
