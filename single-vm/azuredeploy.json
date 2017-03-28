@@ -1,0 +1,95 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "sku": {
+            "type": "string",
+            "metadata": {
+                "description": "Size of VMs in the VM Scale Set."
+            }
+        },
+        "name": {
+            "type": "string",
+            "metadata": {
+                "description": "Size of VMs in the VM Scale Set."
+            }
+        },
+        "imageURN": {
+            "type": "string",
+            "metadata": {
+                "description": "Image from Galery"
+            }
+        },
+        "osType": {
+            "type": "string",
+            "metadata": {
+                "description": "OS Type for this image"
+            }
+        },
+        "username": {
+            "type": "string",
+            "metadata": {
+                "description": "Admin username on all VMs."
+            }
+        },
+        "password": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Admin password on all VMs."
+            }
+        },
+        "subnet": {
+            "type": "string",
+            "metadata": {
+
+                "description": "Subnet where VMSS will be deployed - must exist"
+            }
+        },
+        "vnet": {
+            "type": "string",
+            "metadata": {
+                "description": "Global VNET where the Subnets resided - must exist"
+            }
+        }
+    },
+
+    "variables": {
+        "vmName": "[parameters('name')]",
+        "vmSize": "[parameters('sku')]",
+        "location": "[resourceGroup().location]",
+        "virtualNetworkName": "[parameters('vnet')]",
+        "subnetName": "[parameters('subnet')]",
+        "nicName": "[concat(variables('vmName'), '.nic')]",
+        "nsgName": "[concat(variables('vmName'), '.nsg')]",
+        "ipConfigName": "[concat(variables('vmName'), '.ipc')]",
+        "osType": "[parameters('osType')]",
+        "imageReference": "[parameters('imageURN')]",
+        "computeApiVersion": "2016-04-30-preview",
+        "networkApiVersion": "2016-03-30"
+    },
+
+    "resources": [{
+            "apiVersion": "[variables('networkApiVersion')]",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[variables('nsgName')]",
+            "location": "[variables('location')]",
+            "properties": {
+                "securityRules": [{
+                    "name": "ssh_rule",
+                    "properties": {
+                        "description": "Locks inbound down to ssh default port 22.",
+                        "protocol": "Tcp",
+                        "sourcePortRange": "*",
+                        "destinationPortRange": "22",
+                        "sourceAddressPrefix": "*",
+                        "destinationAddressPrefix": "*",
+                        "access": "Allow",
+                        "priority": 1001,
+                        "direction": "Inbound"
+                    }
+                }]
+            }
+        }
+
+    ]
+}

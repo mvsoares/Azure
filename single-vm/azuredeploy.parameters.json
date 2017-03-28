@@ -1,0 +1,30 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "name": {
+            "value": "myvm"
+        },
+        "sku": {
+            "value": "Standard_A2_V2"
+        },
+        "imageURN": {
+            "value": "Canonical:UbuntuServer:17.04-DAILY:17.04.201703270"
+        },
+        "osType": {
+            "value": "Linux"
+        },
+        "username": {
+            "value": "masoar"
+        },
+        "password": {
+            "value": "Pass@word123"
+        },
+        "subnet": {
+            "value": "default"
+        },
+        "vnetName": {
+            "value": "vnet01"
+        }
+    }
+}
