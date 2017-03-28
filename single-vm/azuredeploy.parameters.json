@@ -11,18 +11,6 @@
         "storageSku": {
             "value": "Premium_LRS"
         },
-        "publisher": {
-            "value": "Canonical"
-        },
-        "offer": {
-            "value": "UbuntuServer"
-        },
-        "imageSku": {
-            "value": "17.04-DAILY"
-        },
-        "imageVersion": {
-            "value": "17.04.201703270"
-        },
         "imageURN": {
             "value": "Canonical:UbuntuServer:16.04.0-LTS:16.04.201611150"
         },
@@ -40,6 +28,10 @@
         },
         "vnet": {
             "value": "VNET-01"
+        },
+        "nsgPort": {
+            "value": "22"
         }
+
     }
 }

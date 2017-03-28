@@ -22,41 +22,12 @@
             }
         },
 
-        "offer": {
-            "type": "string",
-            "metadata": {
-                "description": "Image from Galery"
-            }
-        },
-
-        "publisher": {
-            "type": "string",
-            "metadata": {
-                "description": "Image from Galery"
-            }
-        },
-
-        "imageSku": {
-            "type": "string",
-            "metadata": {
-                "description": "Image from Galery"
-            }
-        },
-
-        "imageVersion": {
-            "type": "string",
-            "metadata": {
-                "description": "Image from Galery"
-            }
-        },
-
         "imageURN": {
             "type": "string",
             "metadata": {
                 "description": "Image from Galery"
             }
         },
-
 
         "osType": {
             "type": "string",
@@ -88,6 +59,12 @@
             "metadata": {
                 "description": "Global VNET where the Subnets resided - must exist"
             }
+        },
+        "nsgPort": {
+            "type": "string",
+            "metadata": {
+                "description": "Port to open on NSG"
+            }
         }
     },
 
@@ -95,6 +72,7 @@
         "vmName": "[parameters('name')]",
         "uniqueDnsLabelPrefix": "[concat('store', uniquestring(resourceGroup().id))]",
         "vmSize": "[parameters('sku')]",
+        "nsgPort": "[parameters('nsgPort')]",
         "storageSku": "[parameters('storageSku')]",
         "location": "[resourceGroup().location]",
         "virtualNetworkName": "[parameters('vnet')]",
@@ -110,21 +88,19 @@
         "networkApiVersion": "2016-03-30"
     },
 
-    "resources": [
-
-        {
+    "resources": [{
             "apiVersion": "[variables('networkApiVersion')]",
             "type": "Microsoft.Network/networkSecurityGroups",
             "name": "[variables('nsgName')]",
             "location": "[variables('location')]",
             "properties": {
                 "securityRules": [{
-                    "name": "ssh_rule",
+                    "name": "[concat('allow-', variables('vmName'))]",
                     "properties": {
-                        "description": "Locks inbound down to ssh default port 22.",
+                        "description": "[concat('Locks inbound down to default port' , variables('vmName'))]",
                         "protocol": "Tcp",
                         "sourcePortRange": "*",
-                        "destinationPortRange": "22",
+                        "destinationPortRange": "[variables('nsgPort')]",
                         "sourceAddressPrefix": "*",
                         "destinationAddressPrefix": "*",
                         "access": "Allow",
