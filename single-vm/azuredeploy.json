@@ -95,9 +95,9 @@
             "location": "[variables('location')]",
             "properties": {
                 "securityRules": [{
-                    "name": "[concat('allow-', variables('vmName'))]",
+                    "name": "[concat('allow-', variables('nsgPort'))]",
                     "properties": {
-                        "description": "[concat('Locks inbound down to default port' , variables('vmName'))]",
+                        "description": "[concat('Locks inbound down to default port' , variables('nsgPort'))]",
                         "protocol": "Tcp",
                         "sourcePortRange": "*",
                         "destinationPortRange": "[variables('nsgPort')]",
