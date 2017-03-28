@@ -106,6 +106,30 @@
                     "domainNameLabel": "[variables('uniqueDnsLabelPrefix')]"
                 }
             }
+        },
+
+        {
+            "apiVersion": "[variables('networkApiVersion')]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[variables('nicName')]",
+            "location": "[variables('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIpName'))]"
+            ],
+            "properties": {
+                "ipConfigurations": [{
+                    "name": "ipconfig1",
+                    "properties": {
+                        "privateIPAllocationMethod": "Dynamic",
+                        "publicIPAddress": {
+                            "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIpName'))]"
+                        },
+                        "subnet": {
+                            "id": "[variables('subnetName')]"
+                        }
+                    }
+                }]
+            }
         }
 
     ]
