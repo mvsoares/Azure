@@ -201,7 +201,7 @@
     "outputs": {
         "sshCommand": {
             "type": "string",
-            "value": "[concat('ssh ', parameters('username'), '@', variables('uniqueDnsLabelPrefix'), '.', resourceGroup().location, '.cloudapp.azure.com')]"
+            "value": "[concat('vm public name ', parameters('username'), '@', variables('uniqueDnsLabelPrefix'), '.', resourceGroup().location, '.cloudapp.azure.com')]"
         }
     }
 }
