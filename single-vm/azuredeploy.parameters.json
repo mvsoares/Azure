@@ -23,7 +23,7 @@
         "subnet": {
             "value": "default"
         },
-        "vnetName": {
+        "vnet": {
             "value": "vnet01"
         }
     }

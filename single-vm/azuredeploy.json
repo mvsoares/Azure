@@ -55,6 +55,7 @@
 
     "variables": {
         "vmName": "[parameters('name')]",
+        "uniqueDnsLabelPrefix": "[concat('store', uniquestring(resourceGroup().id))]",
         "vmSize": "[parameters('sku')]",
         "location": "[resourceGroup().location]",
         "virtualNetworkName": "[parameters('vnet')]",
@@ -62,13 +63,16 @@
         "nicName": "[concat(variables('vmName'), '.nic')]",
         "nsgName": "[concat(variables('vmName'), '.nsg')]",
         "ipConfigName": "[concat(variables('vmName'), '.ipc')]",
+        "publicIpName": "[concat(variables('vmName'), '.pubip')]",
         "osType": "[parameters('osType')]",
         "imageReference": "[parameters('imageURN')]",
         "computeApiVersion": "2016-04-30-preview",
         "networkApiVersion": "2016-03-30"
     },
 
-    "resources": [{
+    "resources": [
+
+        {
             "apiVersion": "[variables('networkApiVersion')]",
             "type": "Microsoft.Network/networkSecurityGroups",
             "name": "[variables('nsgName')]",
@@ -88,6 +92,19 @@
                         "direction": "Inbound"
                     }
                 }]
+            }
+        },
+
+        {
+            "apiVersion": "[variables('apiVersion')]",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[variables('publicIpName')]",
+            "location": "[variables('location')]",
+            "properties": {
+                "publicIPAllocationMethod": "Dynamic",
+                "dnsSettings": {
+                    "domainNameLabel": "[variables('uniqueDnsLabelPrefix')]"
+                }
             }
         }
 
