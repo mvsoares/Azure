@@ -132,6 +132,48 @@
                     }
                 }]
             }
+        },
+
+        {
+            "apiVersion": "[variables('computeApiVersion')]",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[variables('vmName')]",
+            "location": "[variables('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
+            ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[variables('vmSize')]"
+                },
+                "osProfile": {
+                    "computerName": "[variables('vmName')]",
+                    "adminUsername": "[parameters('username')]",
+                    "adminPassword": "[parameters('password')]"
+                },
+
+                "storageProfile": {
+
+                    "imageReference": {
+                        "id": "[variables('imageReference')]"
+                    },
+
+                    "osDisk": {
+                        "managedDisk": {
+                            "storageAccountType": "Premium_LRS"
+                        },
+                        "createOption": "FromImage",
+                        "name": "[concat(variables('vmName'), '.oshd')]",
+                        "osType": "[variables('osType')]"
+                    }
+                },
+
+                "networkProfile": {
+                    "networkInterfaces": [{
+                        "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))]"
+                    }]
+                }
+            }
         }
 
     ]

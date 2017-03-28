@@ -6,7 +6,7 @@
             "value": "myvm"
         },
         "sku": {
-            "value": "Standard_A2_V2"
+            "value": "Standard_DS1_V2"
         },
         "imageURN": {
             "value": "Canonical:UbuntuServer:17.04-DAILY:17.04.201703270"
@@ -24,7 +24,7 @@
             "value": "default"
         },
         "vnet": {
-            "value": "vnet01"
+            "value": "VNET-01"
         }
     }
 }
