@@ -1,0 +1,204 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "sku": {
+            "type": "string",
+            "metadata": {
+                "description": "Size of VMs in the VM. Example(other size avaiable): Standard_D1_v2,Standard_A1_v2,Standard_A2m_v2,Standard_DS2_v2,Standard_F1s,Standard_GS1"
+            }
+        },
+        "storageSku": {
+            "type": "string",
+            "metadata": {
+                "description": "Storage type. Premium_LRS or Standard_LRS. Choose by vm type"
+            }
+        },
+
+        "name": {
+            "type": "string",
+            "metadata": {
+                "description": "Name for this VM. "
+            }
+        },
+
+        "imageID": {
+            "type": "string",
+            "metadata": {
+                "description": "ImageID . Example: /subscriptions/YOUR-SUB/resourceGroups/RESOURCE-GROUP/providers/Microsoft.Compute/images/IMAGE-NAME"
+            }
+        },
+
+        "osType": {
+            "type": "string",
+            "metadata": {
+                "description": "OS Type for this image. Windows or Linux"
+            }
+        },
+        "username": {
+            "type": "string",
+            "metadata": {
+                "description": "Admin username."
+            }
+        },
+        "password": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Admin password."
+            }
+        },
+        "subnet": {
+            "type": "string",
+            "metadata": {
+
+                "description": "Subnet where VM will be deploy - must exist"
+            }
+        },
+        "vnet": {
+            "type": "string",
+            "metadata": {
+                "description": "Global VNET where the Subnets resided - must exist"
+            }
+        },
+        "nsgPort": {
+            "type": "string",
+            "metadata": {
+                "description": "Port to open on NSG"
+            }
+        }
+    },
+
+    "variables": {
+        "vmName": "[parameters('name')]",
+        "uniqueDnsLabelPrefix": "[concat('store', uniquestring(resourceGroup().id))]",
+        "vmSize": "[parameters('sku')]",
+        "nsgPort": "[parameters('nsgPort')]",
+        "storageSku": "[parameters('storageSku')]",
+        "location": "[resourceGroup().location]",
+        "virtualNetworkName": "[parameters('vnet')]",
+        "subnetName": "[parameters('subnet')]",
+        "nicName": "[concat(variables('vmName'), '.nic')]",
+        "nsgName": "[concat(variables('vmName'), '.nsg')]",
+        "ipConfigName": "[concat(variables('vmName'), '.ipc')]",
+        "publicIpName": "[concat(variables('vmName'), '.pubip')]",
+        "osType": "[parameters('osType')]",
+        "vnetID": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
+        "subnetID": "[concat(variables('vnetID'),'/subnets/',variables('subnetName'))]",
+        "computeApiVersion": "2016-04-30-preview",
+        "networkApiVersion": "2016-03-30"
+    },
+
+    "resources": [{
+            "apiVersion": "[variables('networkApiVersion')]",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[variables('nsgName')]",
+            "location": "[variables('location')]",
+            "properties": {
+                "securityRules": [{
+                    "name": "[concat('allow-', variables('nsgPort'))]",
+                    "properties": {
+                        "description": "[concat('Locks inbound down to default port' , variables('nsgPort'))]",
+                        "protocol": "Tcp",
+                        "sourcePortRange": "*",
+                        "destinationPortRange": "[variables('nsgPort')]",
+                        "sourceAddressPrefix": "*",
+                        "destinationAddressPrefix": "*",
+                        "access": "Allow",
+                        "priority": 1001,
+                        "direction": "Inbound"
+                    }
+                }]
+            }
+        },
+
+        {
+            "apiVersion": "[variables('networkApiVersion')]",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[variables('publicIpName')]",
+            "location": "[variables('location')]",
+            "properties": {
+                "publicIPAllocationMethod": "Dynamic",
+                "dnsSettings": {
+                    "domainNameLabel": "[variables('uniqueDnsLabelPrefix')]"
+                }
+            }
+        },
+
+        {
+            "apiVersion": "[variables('networkApiVersion')]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[variables('nicName')]",
+            "location": "[variables('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIpName'))]"
+            ],
+            "properties": {
+                "ipConfigurations": [{
+                    "name": "ipconfig1",
+                    "properties": {
+                        "privateIPAllocationMethod": "Dynamic",
+                        "networkSecurityGroup": {
+                            "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsgName'))]"
+                        },
+                        "publicIPAddress": {
+                            "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIpName'))]"
+                        },
+                        "subnet": {
+                            "id": "[variables('subnetID')]"
+                        }
+                    }
+                }]
+            }
+        },
+
+        {
+            "apiVersion": "[variables('computeApiVersion')]",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[variables('vmName')]",
+            "location": "[variables('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
+            ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[variables('vmSize')]"
+                },
+
+                "osProfile": {
+                    "computerName": "[variables('vmName')]",
+                    "adminUsername": "[parameters('username')]",
+                    "adminPassword": "[parameters('password')]"
+                },
+
+                "storageProfile": {
+                    "imageReference": {
+                        "id": "[parameters('imageID')]"
+                    },
+
+                    "osDisk": {
+                        "managedDisk": {
+                            "storageAccountType": "[variables('storageSku')]"
+                        },
+                        "createOption": "FromImage",
+                        "name": "[concat(variables('vmName'), '.osvhd')]",
+                        "osType": "[variables('osType')]"
+                    }
+                },
+
+                "networkProfile": {
+                    "networkInterfaces": [{
+                        "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))]"
+                    }]
+                }
+            }
+        }
+
+    ],
+
+    "outputs": {
+        "sshCommand": {
+            "type": "string",
+            "value": "[concat('vm public name ', parameters('username'), '@', variables('uniqueDnsLabelPrefix'), '.', resourceGroup().location, '.cloudapp.azure.com')]"
+        }
+    }
+}

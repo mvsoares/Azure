@@ -1,0 +1,7 @@
+{
+    "itemDisplayName": "Deploy a single VM on an existing vnet/subnet",
+    "description": "This template allows you to deploy a simple VM, using an image from gallery",
+    "summary": "This template allows you to deploy a simple VM, using an image from gallery",
+    "githubUsername": "mvsoares",
+    "dateUpdated": "2017-03-28"
+}

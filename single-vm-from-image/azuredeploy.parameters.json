@@ -1,0 +1,37 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "name": {
+            "value": "YOUR_VMNAME"
+        },
+        "sku": {
+            "value": "Standard_DS1_V2"
+        },
+        "storageSku": {
+            "value": "Premium_LRS"
+        },
+        "imageID": {
+            "value": "/subscriptions/YOUR-SUB/resourceGroups/RESOURCE-GROUP/providers/Microsoft.Compute/images/IMAGE-NAME"
+        },
+        "osType": {
+            "value": "Linux"
+        },
+        "username": {
+            "value": "masoar"
+        },
+        "password": {
+            "value": "YOURPASSWORD"
+        },
+        "subnet": {
+            "value": "SUBNET-NAME"
+        },
+        "vnet": {
+            "value": "VNET-NAME"
+        },
+        "nsgPort": {
+            "value": "22"
+        }
+
+    }
+}
