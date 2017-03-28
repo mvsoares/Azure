@@ -5,7 +5,7 @@
         "sku": {
             "type": "string",
             "metadata": {
-                "description": "Size of VMs in the VM Scale Set."
+                "description": "Size of VMs in the VM. Example(other size avaiable): Standard_D1_v2,Standard_A1_v2,Standard_A2m_v2,Standard_DS2_v2,Standard_F1s,Standard_GS1"
             }
         },
         "storageSku": {
@@ -18,40 +18,40 @@
         "name": {
             "type": "string",
             "metadata": {
-                "description": "Size of VMs in the VM Scale Set."
+                "description": "Name for this VM. "
             }
         },
 
         "imageURN": {
             "type": "string",
             "metadata": {
-                "description": "Image from Galery"
+                "description": "Image from Galery. Example: Canonical:UbuntuServer:16.04.0-LTS:16.04.201611150, OpenLogic:CentOS:7.3:7.3.20161221, MicrosoftWindowsServer:WindowsServer:2016-Datacenter:2016.0.20170127 "
             }
         },
 
         "osType": {
             "type": "string",
             "metadata": {
-                "description": "OS Type for this image"
+                "description": "OS Type for this image. Windows or Linux"
             }
         },
         "username": {
             "type": "string",
             "metadata": {
-                "description": "Admin username on all VMs."
+                "description": "Admin username."
             }
         },
         "password": {
             "type": "securestring",
             "metadata": {
-                "description": "Admin password on all VMs."
+                "description": "Admin password."
             }
         },
         "subnet": {
             "type": "string",
             "metadata": {
 
-                "description": "Subnet where VMSS will be deployed - must exist"
+                "description": "Subnet where VM will be deploy - must exist"
             }
         },
         "vnet": {
