@@ -118,9 +118,6 @@
             "location": "[variables('location')]",
             "properties": {
                 "publicIPAllocationMethod": "Dynamic",
-                "dnsSettings": {
-                    "domainNameLabel": "[variables('uniqueDnsLabelPrefix')]"
-                }
             }
         },
 
