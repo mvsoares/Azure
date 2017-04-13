@@ -1,0 +1,36 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmSku": {
+            "value": "Standard_DS1_V2"
+        },
+        "imageId": {
+            "value": "/subscriptions/1e9d081d-935a-4dd1-8054-b31dd2201362/resourceGroups/rg.imagetemplate/providers/Microsoft.Compute/images/imagetemplatev1"
+        },
+        "vmssName": {
+            "value": "tstshm"
+        },
+        "instanceCount": {
+            "value": 2
+        },
+        "minimumVM": {
+            "value": 2
+        },
+        "maximumVM": {
+            "value": 10
+        },
+        "adminUsername": {
+            "value": "masoar"
+        },
+        "adminPassword": {
+            "value": "Pass@word123"
+        },
+        "vmssSubnet": {
+            "value": "default"
+        },
+        "vnetName": {
+            "value": "vnet01"
+        }
+    }
+}

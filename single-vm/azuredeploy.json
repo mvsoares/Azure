@@ -118,9 +118,6 @@
             "location": "[variables('location')]",
             "properties": {
                 "publicIPAllocationMethod": "Dynamic",
-                "dnsSettings": {
-                    "domainNameLabel": "[variables('uniqueDnsLabelPrefix')]"
-                }
             }
         },
 
@@ -196,12 +193,6 @@
             }
         }
 
-    ],
+    ]
 
-    "outputs": {
-        "sshCommand": {
-            "type": "string",
-            "value": "[concat('vm public name ', parameters('username'), '@', variables('uniqueDnsLabelPrefix'), '.', resourceGroup().location, '.cloudapp.azure.com')]"
-        }
-    }
 }

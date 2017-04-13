@@ -190,12 +190,5 @@
             }
         }
 
-    ],
-
-    "outputs": {
-        "sshCommand": {
-            "type": "string",
-            "value": "[concat('vm public name ', parameters('username'), '@', variables('uniqueDnsLabelPrefix'), '.', resourceGroup().location, '.cloudapp.azure.com')]"
-        }
-    }
+    ]
 }

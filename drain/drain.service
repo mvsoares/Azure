@@ -1,0 +1,14 @@
+[Unit]
+Description=Drain service
+After=httpd.service
+
+[Service]
+Type=oneshot
+ExecStart=/etc/undrain.sh
+ExecStop=/etc/drain.sh
+RemainAfterExit=yes
+TimeoutStopSec=2min
+
+[Install]
+WantedBy=default.target
+
