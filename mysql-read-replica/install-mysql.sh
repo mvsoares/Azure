@@ -11,6 +11,7 @@ fi
 # enable mysql repo
 wget https://dev.mysql.com/get/mysql57-community-release-el7-11.noarch.rpm --no-check-certificate
 sudo rpm -ivh mysql57-community-release-el7-11.noarch.rpm
+sudo rm mysql57-community-release-el7-11.noarch.rpm
 
 sudo yum update -y
 
@@ -29,16 +30,28 @@ fi
 
 echo "Setting new password: $newpw"
 
-if [ ! -e ~/.my.cnf ] ; then
-    echo "
+echo "
 [client]
 user=root
 password=$mysqlPwd
 host=localhost" > ~/.my.cnf
 
-mysqladmin -u root password $newpw
-else
-    echo "~/.my.cnf already there - nothing to do"
+if [ ! -e ~/.my.cnf ] ; then
+    mysqladmin -u root password $newpw
 fi
+
+echo "
+[client]
+user=root
+password=$newpw
+host=localhost" > ~/.my.cnf
+	
+echo "
+CREATE USER 'azureuser'@'%' IDENTIFIED BY '$newpw';
+GRANT ALL PRIVILEGES ON *.* TO 'azureuser'@'%' WITH GRANT OPTION; " > /tmp/tmp.sql
+
+mysql < /tmp/tmp.sql
+
+rm -f /tmp/tmp.sql
 
 exit 0
