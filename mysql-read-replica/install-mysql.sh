@@ -36,9 +36,7 @@ user=root
 password='$mysqlPwd'
 host=localhost" > ~/.my.cnf
 
-if [ ! -e ~/.my.cnf ] ; then
-    mysqladmin -u root password "$newpw"
-fi
+mysqladmin -u root password "$newpw"
 
 echo "
 [client]
