@@ -4,6 +4,9 @@ else
 	mysqlPwd="AzureRocks1000##"
 fi
 
+mkdir -p /var/log/mysql/
+chown mysql.mysql /var/log/mysql/
+
 echo "server-id = 1
 log_bin = /var/log/mysql/mysql-bin.log
 binlog-ignore-db  = informationschema" >> /etc/my.cnf
@@ -11,9 +14,9 @@ binlog-ignore-db  = informationschema" >> /etc/my.cnf
 systemctl restart mysqld
 
 
-echo "GRANT REPLICATION SLAVE ON *.* TO 'slave_user'@'%' IDENTIFIED BY 'AzureRocks1000##';
-FLUSH PRIVILEGES;" > /tmp/tmp-slave.sql 
+echo "GRANT REPLICATION SLAVE ON *.* TO 'slave_user'@'%' IDENTIFIED BY '$mysqlPwd';
+FLUSH PRIVILEGES;" > /tmp/tmp-replication.sql 
 
-mysql -u root -p"$mysqlPwd" < /tmp/tmp-slave.sql 
+mysql -u root -p"$mysqlPwd" < /tmp/tmp-replication.sql 
 
 rm /tmp/tmp-slave.sql 
