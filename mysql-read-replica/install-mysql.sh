@@ -38,6 +38,6 @@ echo "mysql -u root -p$mysqlPwd < /tmp/tmp-user.sql" >> /var/log/install.txt
 
 mysqladmin -u root -p"$mysqlPwd" password "$newpw"
 
-mysql -u root -p$newpw < /tmp/tmp-user.sql
+mysql -u root -p"$newpw" < /tmp/tmp-user.sql
 
 exit 0
