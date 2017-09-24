@@ -28,16 +28,14 @@ else
     newpw="AzureRocks1000##"
 fi
 
-echo "install password : $mysqlPwd" > /var/log/install.txt 
-
 
 echo "CREATE USER 'azureuser'@'%' IDENTIFIED BY '$newpw';
 GRANT ALL PRIVILEGES ON *.* TO 'azureuser'@'%' WITH GRANT OPTION; " > /tmp/tmp-user.sql
 
-echo "mysql -u root -p$mysqlPwd < /tmp/tmp-user.sql" >> /var/log/install.txt
-
 mysqladmin -u root -p"$mysqlPwd" password "$newpw"
 
 mysql -u root -p"$newpw" < /tmp/tmp-user.sql
+
+rm /tmp/tmp-user.sql
 
 exit 0
