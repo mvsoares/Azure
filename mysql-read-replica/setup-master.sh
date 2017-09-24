@@ -19,4 +19,4 @@ FLUSH PRIVILEGES;" > /tmp/tmp-replication.sql
 
 mysql -u root -p"$mysqlPwd" < /tmp/tmp-replication.sql 
 
-rm /tmp/tmp-slave.sql 
+rm /tmp/tmp-replication.sql 
