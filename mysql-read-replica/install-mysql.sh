@@ -25,7 +25,7 @@ mysqlPwd=$(grep 'A temporary password is generated for' /var/log/mysqld.log |awk
 if [ -n "$1" ] ; then
     newpw="$1"
 else
-    newpw="AzureRocks100!"
+    newpw="AzureRocks1000##"
 fi
 
 echo "Setting new password: $newpw"
