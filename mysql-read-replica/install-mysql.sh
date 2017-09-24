@@ -33,7 +33,7 @@ echo "Setting new password: $newpw"
 echo "
 [client]
 user=root
-password="$mysqlPwd"
+password='$mysqlPwd'
 host=localhost" > ~/.my.cnf
 
 if [ ! -e ~/.my.cnf ] ; then
@@ -43,7 +43,7 @@ fi
 echo "
 [client]
 user=root
-password="$newpw"
+password='$newpw'
 host=localhost" > ~/.my.cnf
 	
 echo "
