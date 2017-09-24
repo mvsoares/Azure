@@ -30,13 +30,7 @@ fi
 
 echo "Setting new password: $newpw"
 
-echo "
-[client]
-user=root
-password='$mysqlPwd'
-host=localhost" > ~/.my.cnf
-
-mysqladmin -u root password "$newpw"
+mysqladmin -u root -p"$mysqlPwd" password "$newpw"
 
 echo "
 [client]
