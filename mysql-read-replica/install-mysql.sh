@@ -30,20 +30,13 @@ fi
 
 echo "Setting new password: $newpw"
 
-mysqladmin -u root -p"$mysqlPwd" password "$newpw"
-
-echo "
-[client]
-user=root
-password='$newpw'
-host=localhost" > ~/.my.cnf
-	
 echo "
 CREATE USER 'azureuser'@'%' IDENTIFIED BY '$newpw';
-GRANT ALL PRIVILEGES ON *.* TO 'azureuser'@'%' WITH GRANT OPTION; " > /tmp/tmp.sql
+GRANT ALL PRIVILEGES ON *.* TO 'azureuser'@'%' WITH GRANT OPTION; " > /tmp/tmp-user.sql
 
-mysql < /tmp/tmp.sql
 
-rm -f /tmp/tmp.sql
+mysql -u root -p"$mysqlPwd" < /tmp/tmp-user.sql
+mysqladmin -u root -p"$mysqlPwd" password "$newpw"
+
 
 exit 0
