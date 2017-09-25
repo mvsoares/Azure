@@ -1,0 +1,7 @@
+{
+    "pluginName" : "ScriptRunner",
+    "preScriptLocation" : "/opt/azure/pre-script.sh",
+    "postScriptLocation" : "/opt/azure/post-script.sh",
+    "continueBackupOnFailure" : true,
+    "fsFreezeEnabled" : true
+}
