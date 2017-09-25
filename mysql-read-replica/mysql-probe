@@ -1,0 +1,13 @@
+#!/bin/bash
+
+probeResult=$(bash /var/www/cgi-bin/probe.sh)
+
+if [ $probeResult -eq 0 ] ; then
+	echo "Content-Type: text/plain"
+	echo
+	echo OK
+else
+	echo "Status: 503 Service Unavailable"
+	echo "Content-Type: text/plain"
+	echo NOT-OK
+fi
