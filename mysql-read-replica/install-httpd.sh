@@ -1,6 +1,6 @@
 yum install -y httpd
 
-set enforce 0 
+setenforce 0
 sed -i -e s/"SELINUX=enforcing"/"SELINUX=disabled"/g /etc/selinux/config
 
 systemctl enable httpd
