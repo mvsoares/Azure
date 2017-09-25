@@ -1,13 +1,38 @@
 #!/bin/bash
+mysqlPortUP=$( { </dev/tcp/localhost/3306; } > /dev/null 2>&1 && echo 0 || echo 1)
 
-probeResult=$(bash /var/www/cgi-bin/probe.sh; echo $?)
+okHTML="Content-Type: text/plain\n\nOK"
+notOkHTML="Status: 503 Service Unavailable\nContent-Type: text/plain\n\nNOT-OK"
 
-if [ $probeResult -eq 0 ] ; then
-        echo "Content-Type: text/plain"
-        echo
-        echo OK
-else
-        echo "Status: 503 Service Unavailable"
-        echo "Content-Type: text/plain"
-        echo NOT-OK
+# mysql not-running - return error 
+if [ $mysqlPortUP -eq 1 ] ; then
+    echo -e "$notOkHTML"
+    exit 0
 fi
+
+# check for a drain
+if [ ! -e /var/run/drain-mysql ] ; then
+    # no drain file - running - probe OK
+    echo -e "$okHTML"
+    exit 0
+fi
+
+# there is a drain file - check for expiration
+currentDate=$(date +%s);
+drainDate=$(cat /var/run/drain-mysql )
+difference=$(($drainDate - currentDate))
+expired=$( (( $difference <= 0 )); echo $?)
+
+if [ $expired -eq 1 ] ; then
+    #not expired yet - so this is drainning situation - you must remove from LB
+    echo -e "$notOkHTML"
+    exit 1
+else
+    # expired the drain - return OK to the probe
+    echo -e "$okHTML"
+    exit 0
+fi
+
+# you shouldn't be here
+echo -e "$okHTML"
+exit 0
