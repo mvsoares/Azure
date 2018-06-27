@@ -25,3 +25,5 @@ ln -s /usr/lib64/mpich/bin/mpiexec /usr/bin/mpiexec
 ln -s /usr/lib64/mpich/bin/mpirun /usr/bin/mpirun
 ln -s /usr/lib64/mpich/bin/hydra_pmi_proxy /usr/bin/hydra_pmi_proxy
 ln -s /usr/lib64/mpich/bin/mpicc /usr/bin/mpicc
+
+echo "Finalizado"
