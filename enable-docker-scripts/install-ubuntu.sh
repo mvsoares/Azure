@@ -1,7 +1,7 @@
 sudo apt-get remove docker docker-engine docker.io
 sudo apt-get update
 sudo apt-get install \
-    apt-transport-https \
+    apt-transport-https sysstat siege \
     ca-certificates \
     curl \
     software-properties-common -y
