@@ -14,3 +14,4 @@ sudo add-apt-repository \
 sudo apt-get update
 sudo apt-get install docker-ce -y
 sudo usermod -aG docker azuretest
+docker run -d -p 80:80 mvsoares/nginx-ubuntu:v1
