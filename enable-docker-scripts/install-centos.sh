@@ -1,6 +1,7 @@
 sudo yum check-update
 sudo yum install sysstat epel-release -y
-sudo yum siege epel-release -y
+sudo yum update -y
+sudo yum instll siege -y
 curl -fsSL https://get.docker.com/ | sh
 sudo systemctl start docker
 sudo systemctl status docker
