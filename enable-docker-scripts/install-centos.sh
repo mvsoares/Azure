@@ -1,4 +1,4 @@
-sudo yum update -y
+sudo yum update -y --exclude=WALinuxAgent
 sudo yum install sysstat epel-release -y
 sudo yum install siege -y
 curl -fsSL https://get.docker.com/ | sh
