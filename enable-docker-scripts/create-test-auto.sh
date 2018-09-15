@@ -39,7 +39,7 @@ imageName=OpenLogic:CentOS:7.5:7.5.20180815
 vmSize=Standard_D4s_v3
 baseNameBastion=$vmPrefix
 
-echo "Creating Bastion Server: $baseNameBastion"
+echo -e "Creating Bastion Server: $baseNameBastion"
 
 az network public-ip create --resource-group $rg \
     --name pip-$baseNameBastion --allocation-method static --idle-timeout 4
@@ -64,12 +64,12 @@ az vm create \
     --admin-password $adminPassword \
     --authentication-type password
 
-echo "Bastion server $baseNameBastion created. Initing scripts ... "
+echo -e "Bastion server $baseNameBastion created. Initing scripts ... "
 az vm extension set --resource-group $rg --vm-name vm-$baseNameBastion --name customScript --publisher Microsoft.Azure.Extensions --settings '{"fileUris": ["https://raw.githubusercontent.com/mvsoares/Azure/master/enable-docker-scripts/install-centos.sh"],"commandToExecute": "bash install-centos.sh"}'
 
-echo "-----------------------------------------------" 
-echo "Bastion Server: $baseNameBastion done "
-echo "-----------------------------------------------" 
+echo -e "-----------------------------------------------" 
+echo -e "Bastion Server: $baseNameBastion done "
+echo -e "-----------------------------------------------" 
 
 
 vmSize=Standard_D8s_v3
@@ -80,7 +80,7 @@ imageName=UbuntuLTS
 for i in {1..2}; 
 do
     baseNameLoop=$vmPrefix$i
-    echo "Initing $baseNameLoop . Image: $imageName AcceleratedNetwork: $accNet"
+    echo -e "Initing $baseNameLoop . Image: $imageName AcceleratedNetwork: $accNet"
 
     az network nic create \
         -n nic-$baseNameLoop \
@@ -102,9 +102,9 @@ do
         --admin-password $adminPassword \
         --authentication-type password
         
-    echo "Vm $baseNameLoop created. Initing scripts"
+    echo -e "Vm $baseNameLoop created. Initing scripts"
     az vm extension set -g $rg --vm-name vm-$baseNameLoop --name customScript --publisher Microsoft.Azure.Extensions --settings '{"fileUris": ["https://raw.githubusercontent.com/mvsoares/Azure/master/enable-docker-scripts/install-ubuntu.sh"],"commandToExecute": "bash install-ubuntu.sh"}'
-    echo "-----------------------------------------------" 
+    echo -e "-----------------------------------------------" 
 done
 
 # Ubuntu NON-ACC
@@ -114,8 +114,8 @@ imageName=UbuntuLTS
 for i in {1..2}; 
 do
     baseNameLoop=$vmPrefix$i
-    echo "Initing $baseNameLoop "
-    echo "Initing $baseNameLoop . Image: $imageName AcceleratedNetwork: $accNet"
+    echo -e "Initing $baseNameLoop "
+    echo -e "Initing $baseNameLoop . Image: $imageName AcceleratedNetwork: $accNet"
 
     az network nic create \
         -n nic-$baseNameLoop \
@@ -137,9 +137,9 @@ do
         --admin-password $adminPassword \
         --authentication-type password
 
-    echo "Vm $baseNameLoop created. Initing scripts"
+    echo -e "Vm $baseNameLoop created. Initing scripts"
     az vm extension set -g $rg --vm-name vm-$baseNameLoop --name customScript --publisher Microsoft.Azure.Extensions --settings '{"fileUris": ["https://raw.githubusercontent.com/mvsoares/Azure/master/enable-docker-scripts/install-ubuntu.sh"],"commandToExecute": "bash install-ubuntu.sh"}'
-    echo "-----------------------------------------------" 
+    echo -e "-----------------------------------------------" 
 done
 
 # centos ACC
@@ -149,8 +149,8 @@ imageName=OpenLogic:CentOS:7.5:7.5.20180815
 for i in {1..2}; 
 do
     baseNameLoop=$vmPrefix$i
-    echo $baseNameLoop
-    echo "Initing $baseNameLoop . Image: $imageName AcceleratedNetwork: $accNet"
+    echo -e $baseNameLoop
+    echo -e "Initing $baseNameLoop . Image: $imageName AcceleratedNetwork: $accNet"
 
     az network nic create \
         -n nic-$baseNameLoop \
@@ -172,9 +172,9 @@ do
         --admin-password $adminPassword \
         --authentication-type password
 
-    echo "Vm $baseNameLoop created. Initing scripts"
+    echo -e "Vm $baseNameLoop created. Initing scripts"
     az vm extension set --resource-group $rg --vm-name vm-$baseNameLoop --name customScript --publisher Microsoft.Azure.Extensions --settings '{"fileUris": ["https://raw.githubusercontent.com/mvsoares/Azure/master/enable-docker-scripts/install-centos.sh"],"commandToExecute": "bash install-centos.sh"}'
-    echo "-----------------------------------------------"     
+    echo -e "-----------------------------------------------"     
 done
 
 # centos NON-ACC
@@ -184,8 +184,8 @@ imageName=OpenLogic:CentOS:7.5:7.5.20180815
 for i in {1..2}; 
 do
     baseNameLoop=$vmPrefix$i
-    echo $baseNameLoop
-    echo "Initing $baseNameLoop . Image: $imageName AcceleratedNetwork: $accNet"
+    echo -e $baseNameLoop
+    echo -e "Initing $baseNameLoop . Image: $imageName AcceleratedNetwork: $accNet"
 
     az network nic create \
         -n nic-$baseNameLoop \
@@ -207,12 +207,12 @@ do
         --admin-password $adminPassword \
         --authentication-type password
 
-    echo "Vm $baseNameLoop created. Initing scripts"
+    echo -e "Vm $baseNameLoop created. Initing scripts"
     az vm extension set --resource-group $rg --vm-name vm-$baseNameLoop --name customScript --publisher Microsoft.Azure.Extensions --settings '{"fileUris": ["https://raw.githubusercontent.com/mvsoares/Azure/master/enable-docker-scripts/install-centos.sh"],"commandToExecute": "bash install-centos.sh"}'
-    echo "-----------------------------------------------" 
+    echo -e "-----------------------------------------------" 
 done
 
 
 vmBastion=$(az network public-ip list --query "[].{ip:ipAddress, vm:name}" |grep $baseNameBastion)
-echo "$vmBastion user: $adminUsername passwd: $adminPassword"
-echo "Finished"
+echo -e "$vmBastion user: $adminUsername passwd: $adminPassword"
+echo -e "Finished"
