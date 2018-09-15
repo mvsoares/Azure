@@ -105,8 +105,10 @@ do
         
     echo -e "Vm $baseNameLoop created. Initing scripts"
     az vm extension set -g $rg --vm-name vm-$baseNameLoop --name customScript --publisher Microsoft.Azure.Extensions --settings '{"fileUris": ["https://raw.githubusercontent.com/mvsoares/Azure/master/enable-docker-scripts/install-ubuntu.sh"],"commandToExecute": "bash install-ubuntu.sh"}'
+    echo -e "Rebooting Vm $baseNameLoop"
+    az vm restart -n vm-$baseNameLoop -g $rg     
+    az vm extension set -g $rg --vm-name vm-$baseNameLoop --name customScript --publisher Microsoft.Azure.Extensions --settings '{"fileUris": ["https://raw.githubusercontent.com/mvsoares/Azure/master/enable-docker-scripts/install-docker-run.sh"],"commandToExecute": "bash install-docker-run.sh"}'
     echo -e "-----------------------------------------------" 
-    az vm restart -n vm-$baseNameLoop -g $rg --no-wait
 done
 
 # Ubuntu NON-ACC
@@ -141,7 +143,9 @@ do
 
     echo -e "Vm $baseNameLoop created. Initing scripts"
     az vm extension set -g $rg --vm-name vm-$baseNameLoop --name customScript --publisher Microsoft.Azure.Extensions --settings '{"fileUris": ["https://raw.githubusercontent.com/mvsoares/Azure/master/enable-docker-scripts/install-ubuntu.sh"],"commandToExecute": "bash install-ubuntu.sh"}'
-    az vm restart -n vm-$baseNameLoop -g $rg --no-wait
+    echo -e "Rebooting Vm $baseNameLoop"
+    az vm restart -n vm-$baseNameLoop -g $rg     
+    az vm extension set -g $rg --vm-name vm-$baseNameLoop --name customScript --publisher Microsoft.Azure.Extensions --settings '{"fileUris": ["https://raw.githubusercontent.com/mvsoares/Azure/master/enable-docker-scripts/install-docker-run.sh"],"commandToExecute": "bash install-docker-run.sh"}'
     echo -e "-----------------------------------------------" 
 done
 
@@ -177,8 +181,10 @@ do
 
     echo -e "Vm $baseNameLoop created. Initing scripts"
     az vm extension set --resource-group $rg --vm-name vm-$baseNameLoop --name customScript --publisher Microsoft.Azure.Extensions --settings '{"fileUris": ["https://raw.githubusercontent.com/mvsoares/Azure/master/enable-docker-scripts/install-centos.sh"],"commandToExecute": "bash install-centos.sh"}'
-    az vm restart -n vm-$baseNameLoop -g $rg --no-wait
-    echo -e "-----------------------------------------------"     
+    echo -e "Rebooting Vm $baseNameLoop"
+    az vm restart -n vm-$baseNameLoop -g $rg     
+    az vm extension set -g $rg --vm-name vm-$baseNameLoop --name customScript --publisher Microsoft.Azure.Extensions --settings '{"fileUris": ["https://raw.githubusercontent.com/mvsoares/Azure/master/enable-docker-scripts/install-docker-run.sh"],"commandToExecute": "bash install-docker-run.sh"}'
+    echo -e "-----------------------------------------------" 
 done
 
 # centos NON-ACC
@@ -213,7 +219,9 @@ do
 
     echo -e "Vm $baseNameLoop created. Initing scripts"
     az vm extension set --resource-group $rg --vm-name vm-$baseNameLoop --name customScript --publisher Microsoft.Azure.Extensions --settings '{"fileUris": ["https://raw.githubusercontent.com/mvsoares/Azure/master/enable-docker-scripts/install-centos.sh"],"commandToExecute": "bash install-centos.sh"}'
-    az vm restart -n vm-$baseNameLoop -g $rg --no-wait
+    echo -e "Rebooting Vm $baseNameLoop"
+    az vm restart -n vm-$baseNameLoop -g $rg     
+    az vm extension set -g $rg --vm-name vm-$baseNameLoop --name customScript --publisher Microsoft.Azure.Extensions --settings '{"fileUris": ["https://raw.githubusercontent.com/mvsoares/Azure/master/enable-docker-scripts/install-docker-run.sh"],"commandToExecute": "bash install-docker-run.sh"}'
     echo -e "-----------------------------------------------" 
 done
 
