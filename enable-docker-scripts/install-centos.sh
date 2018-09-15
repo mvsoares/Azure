@@ -1,9 +1,9 @@
-sudo yum update -y --exclude=WALinuxAgent
-sudo yum install sysstat epel-release -y
-sudo yum install siege -y
+yum update -y --exclude=WALinuxAgent
+yum install sysstat epel-release -y
+yum install siege -y
 curl -fsSL https://get.docker.com/ | sh
-sudo systemctl start docker
-sudo systemctl status docker
-sudo systemctl enable docker
-sudo usermod -aG docker azuretest
+systemctl start docker
+systemctl status docker
+systemctl enable docker
+usermod -aG docker azuretest
 docker run -d -p 80:80 mvsoares/nginx-centos:v1
