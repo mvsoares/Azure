@@ -64,7 +64,7 @@ az vm create \
 
 az vm extension set --resource-group $rg --vm-name vm-$baseNameBastion --name customScript --publisher Microsoft.Azure.Extensions --settings '{"fileUris": ["https://raw.githubusercontent.com/mvsoares/Azure/master/enable-docker-scripts/install-centos.sh"],"commandToExecute": "bash install-centos.sh"}'
 
-
+vmSize=Standard_D8s_v3
 # Ubuntu ACC
 vmPrefix=ubuntu-acc
 accNet=true
