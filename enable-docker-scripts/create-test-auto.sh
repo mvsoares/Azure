@@ -211,3 +211,8 @@ do
     az vm extension set --resource-group $rg --vm-name vm-$baseNameLoop --name customScript --publisher Microsoft.Azure.Extensions --settings '{"fileUris": ["https://raw.githubusercontent.com/mvsoares/Azure/master/enable-docker-scripts/install-centos.sh"],"commandToExecute": "bash install-centos.sh"}'
     echo "-----------------------------------------------" 
 done
+
+
+vmBastion=$(az network public-ip list --query "[].{ip:ipAddress, vm:name}" |grep $baseNameBastion)
+echo "$vmBastion user: $adminUsername passwd: $adminPassword"
+echo "Finished"
