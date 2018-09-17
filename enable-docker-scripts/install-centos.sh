@@ -1,5 +1,5 @@
 yum update -y --exclude=WALinuxAgent
-yum install sysstat epel-release -y
+yum install sysstat jq iperf epel-release -y
 curl -fsSL https://get.docker.com/ | sh
 systemctl start docker
 systemctl status docker
