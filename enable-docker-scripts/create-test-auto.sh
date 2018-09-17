@@ -105,7 +105,7 @@ do
     az vm extension set -g $rg --vm-name vm-$baseNameLoop --name customScript --publisher Microsoft.Azure.Extensions --settings '{"fileUris": ["https://raw.githubusercontent.com/mvsoares/Azure/master/enable-docker-scripts/install-ubuntu.sh"],"commandToExecute": "bash install-ubuntu.sh"}'
     echo -e "Rebooting Vm $baseNameLoop"
     az vm restart -n vm-$baseNameLoop -g $rg     
-    az vm extension set -g $rg --vm-name vm-$baseNameLoop --name customScript --publisher Microsoft.Azure.Extensions --settings '{"fileUris": ["https://raw.githubusercontent.com/mvsoares/Azure/master/enable-docker-scripts/install-docker-run-ubuntu.sh"],"commandToExecute": "bash install-docker-ubuntu.sh"}'
+    az vm extension set -g $rg --vm-name vm-$baseNameLoop --name customScript --publisher Microsoft.Azure.Extensions --settings '{"fileUris": ["https://raw.githubusercontent.com/mvsoares/Azure/master/enable-docker-scripts/install-docker-run-ubuntu.sh"],"commandToExecute": "bash install-docker-run-ubuntu.sh"}'
     echo -e "-----------------------------------------------" 
 done
 
@@ -143,7 +143,7 @@ do
     az vm extension set -g $rg --vm-name vm-$baseNameLoop --name customScript --publisher Microsoft.Azure.Extensions --settings '{"fileUris": ["https://raw.githubusercontent.com/mvsoares/Azure/master/enable-docker-scripts/install-ubuntu.sh"],"commandToExecute": "bash install-ubuntu.sh"}'
     echo -e "Rebooting Vm $baseNameLoop"
     az vm restart -n vm-$baseNameLoop -g $rg     
-    az vm extension set -g $rg --vm-name vm-$baseNameLoop --name customScript --publisher Microsoft.Azure.Extensions --settings '{"fileUris": ["https://raw.githubusercontent.com/mvsoares/Azure/master/enable-docker-scripts/install-docker-run-ubuntu.sh"],"commandToExecute": "bash install-docker-ubuntu.sh"}'
+    az vm extension set -g $rg --vm-name vm-$baseNameLoop --name customScript --publisher Microsoft.Azure.Extensions --settings '{"fileUris": ["https://raw.githubusercontent.com/mvsoares/Azure/master/enable-docker-scripts/install-docker-run-ubuntu.sh"],"commandToExecute": "bash install-docker-run-ubuntu.sh"}'
     echo -e "-----------------------------------------------" 
 done
 
