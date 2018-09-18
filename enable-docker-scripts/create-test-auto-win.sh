@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 # variable defintion 
 baseName=testnw-win
@@ -40,15 +40,10 @@ az network nsg rule create --resource-group  $rg \
   --access allow
 
 
-az network nsg rule create --resource-group  $rg \
-  --nsg-name $nsgName --name allow-http \
-  --protocol tcp --direction inbound --priority 1001 --source-address-prefix '*' \
-  --source-port-range '*' --destination-address-prefix '*' --destination-port-range 80 \
-  --access allow
 
 ## bastion server 
 vmPrefix=bastion1
-imageName=MicrosoftWindowsServer:WindowsServerSemiAnnual:Datacenter-Core-1803-with-Containers-smalldisk:1803.0.20180815
+imageName=MicrosoftWindowsServer:WindowsServer:2016-Datacenter-with-Containers:2016.127.20180820
 vmSizeBastion=Standard_D4s_v3
 baseNameBastion=$vmPrefix
 
