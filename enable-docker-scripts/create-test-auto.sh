@@ -10,6 +10,8 @@ vmSize=Standard_D8s_v3
 adminUsername=azuretest
 adminPassword=L8ytNthsJDk4fQB
 location=southcentralus
+centosImage="OpenLogic:CentOS:7.5:7.5.20180815"
+ubuntuImage=UbuntuLTS
 
 # create group / network / nsg 
 az group create -n $rg  -l $location 
@@ -35,7 +37,7 @@ az network nsg rule create --resource-group  $rg \
 
 ## bastion server 
 vmPrefix=bastion1
-imageName=OpenLogic:CentOS:7.5:7.5.20180815
+imageName=$centosImage
 vmSizeBastion=Standard_D4s_v3
 baseNameBastion=$vmPrefix
 
@@ -75,7 +77,7 @@ echo -e "-----------------------------------------------"
 # Ubuntu ACC
 vmPrefix=ubuntu-acc
 accNet=true
-imageName=UbuntuLTS
+imageName=$ubuntuImage
 for i in {1..2}; 
 do
     baseNameLoop=$vmPrefix$i
@@ -112,7 +114,7 @@ done
 # Ubuntu NON-ACC
 vmPrefix=ubuntu-noacc
 accNet=false
-imageName=UbuntuLTS
+imageName=$ubuntuImage
 for i in {1..2}; 
 do
     baseNameLoop=$vmPrefix$i
@@ -150,7 +152,7 @@ done
 # centos ACC
 vmPrefix=centos-acc
 accNet=true
-imageName=OpenLogic:CentOS:7.5:7.5.20180815
+imageName=$centosImage
 for i in {1..2}; 
 do
     baseNameLoop=$vmPrefix$i
@@ -188,7 +190,7 @@ done
 # centos NON-ACC
 vmPrefix=centos-noacc
 accNet=false
-imageName=OpenLogic:CentOS:7.5:7.5.20180815
+imageName=$centosImage
 for i in {1..2}; 
 do
     baseNameLoop=$vmPrefix$i
