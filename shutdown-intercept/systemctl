@@ -1,0 +1,40 @@
+#!/bin/bash
+echo "---------------------" >> /var/log/s.txt
+date >> /var/log/s.txt
+
+# remove /bin or /sbin form call
+clean=$(echo $0 |sed -e s/"\/sbin\/"//g -e s/"\/bin\/"//g)
+echo $clean" "$@ >> /var/log/s.txt
+
+# parse params to remove something unwanted
+declare -a ARGS
+for var in "$@"; do
+    echo " $var "
+    # Ignore known bad arguments
+    if [ "$var" = '--force' ]; then
+        echo "removing force....">>/var/log/s.txt
+        continue
+    fi
+    ARGS[${#ARGS[@]}]="$var"
+done
+echo "Params ${ARGS[@]}" >>/var/log/s.txt
+
+# check if it is a plain call to original systemctl or a wrapper to other functions
+if [ "$clean" == "systemctl" ] ; then
+    echo "/bin/systemctl.original ${ARGS[@]}" >> /var/log/s.txt
+    /bin/systemctl.original ${ARGS[@]}
+else
+    # catch desired command
+    case $clean in
+        poweroff*|reboot*|shutdown*)
+            echo "Drain...." >> /var/log/s.txt
+            break
+            ;;
+       *)
+            echo "Just keep your life going"  >> /var/log/s.txt
+           ;;
+    esac
+
+    echo "/bin/systemctl.original $clean ${ARGS[@]}" >> /var/log/s.txt
+    /bin/systemctl.original $clean ${ARGS[@]}
+fi
