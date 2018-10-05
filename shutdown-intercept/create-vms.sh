@@ -1,7 +1,7 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 # variable defintion 
-baseName=systemd
+baseName=systemd1
 rg=rg-$baseName
 vnet=vnet-$baseName
 subnet=default

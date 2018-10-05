@@ -12,5 +12,5 @@ phpinfo();
 cp /bin/systemctl /bin/systemctl.original
 rm /bin/systemctl
 
-wget https://raw.githubusercontent.com/mvsoares/Azure/master/shutdown-intercept/systemctl -o /bin/systemctl
+curl --insecure https://raw.githubusercontent.com/mvsoares/Azure/master/shutdown-intercept/systemctl > /bin/systemctl
 chmod +x /bin/systemctl
