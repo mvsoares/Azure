@@ -1,0 +1,20 @@
+server {
+        listen 80 default_server backlog=16384;
+        listen [::]:80 default_server backlog=16384;
+
+        location /status {
+          stub_status on;
+          access_log   off;
+          allow 0.0.0.0;
+          allow all;
+        }
+
+        root /var/www/html;
+        index index.html index.htm index.nginx-debian.html;
+        server_name _;
+
+        location / {
+                try_files $uri $uri/ =404;
+        }
+}
+

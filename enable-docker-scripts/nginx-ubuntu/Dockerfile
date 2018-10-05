@@ -10,7 +10,7 @@ FROM ubuntu
 # Install Nginx.
 RUN \
   apt-get update && \
-  apt-get install -y nginx && \
+  apt-get install -y nginx vim curl procps && \
   rm -rf /var/lib/apt/lists/* && \
   echo "\ndaemon off;" >> /etc/nginx/nginx.conf && \
   chown -R www-data:www-data /var/lib/nginx
@@ -24,6 +24,7 @@ WORKDIR /etc/nginx
 ADD ./300k.jpg /var/www/html
 ADD ./30k.jpg /var/www/html
 ADD ./500k.jpg /var/www/html
+ADD ./default /etc/nginx/sites-available/
 
 # Define default command.
 CMD ["nginx"]
