@@ -28,7 +28,6 @@ else
     case $clean in
         poweroff*|reboot*|shutdown*)
             echo "Drain...." >> /var/log/s.txt
-            break
             ;;
        *)
             echo "Just keep your life going"  >> /var/log/s.txt
