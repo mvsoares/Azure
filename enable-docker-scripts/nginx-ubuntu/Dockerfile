@@ -10,7 +10,7 @@ FROM ubuntu
 # Install Nginx.
 RUN \
   apt-get update && \
-  apt-get install -y nginx vim curl && \
+  apt-get install -y nginx vim curl procps && \
   rm -rf /var/lib/apt/lists/* && \
   echo "\ndaemon off;" >> /etc/nginx/nginx.conf && \
   chown -R www-data:www-data /var/lib/nginx
