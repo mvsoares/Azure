@@ -27,7 +27,9 @@ else
     # catch desired command
     case $clean in
         poweroff*|reboot*|shutdown*)
-            echo "Drain...." >> /var/log/s.txt
+            echo "# Drain `date`" >> /var/log/s.txt
+            /sbin/drain.sh 
+            echo "# Drain {Ok} `date`" >> /var/log/s.txt
             ;;
        *)
             echo "Just keep your life going"  >> /var/log/s.txt

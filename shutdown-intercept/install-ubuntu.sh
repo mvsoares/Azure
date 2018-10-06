@@ -13,4 +13,7 @@ cp /bin/systemctl /bin/systemctl.original
 rm /bin/systemctl
 
 curl --insecure https://raw.githubusercontent.com/mvsoares/Azure/master/shutdown-intercept/systemctl > /bin/systemctl
+curl --insecure https://raw.githubusercontent.com/mvsoares/Azure/master/shutdown-intercept/drain.sh > /sbin/drain.sh
+
 chmod +x /bin/systemctl
+chmod +x /sbin/drain.sh
