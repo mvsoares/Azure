@@ -1,5 +1,13 @@
 #!/bin/bash
-echo "---------------------" >> /var/log/drain.txt
-date >> /var/log/drain.txt
-sleep 10
-date >> /var/log/drain.txt
+fileToLog="/var/log/drain.txt"
+echo "---------------------" >> $fileToLog
+
+echo "Init drain `date` " >> $fileToLog
+
+for i in {1..60}
+do 
+    echo "  $i waiting for drain to happend `date` " >> $fileToLog
+    sleep 1; 
+done
+
+echo "End drain `date` " >> $fileToLog
