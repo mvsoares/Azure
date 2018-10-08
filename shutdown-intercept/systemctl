@@ -12,8 +12,8 @@ for var in "$@"; do
     echo " $var "
     # Ignore known bad arguments
     if [ "$var" = '--force' ]; then
-        echo "removing force....">>/var/log/s.txt
-        continue
+        echo "detecting force....">>/var/log/s.txt        
+        ## continue
     fi
     ARGS[${#ARGS[@]}]="$var"
 done
